@@ -1,0 +1,34 @@
+#Understand basic actions of web page
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
+import time
+
+driver=webdriver.Chrome()
+driver.get("https://rahulshettyacademy.com//AutomationPractice//")
+driver.fullscreen_window()
+time.sleep(1)
+total_switches=driver.find_elements(By.XPATH,"//input[@type='checkbox']")
+for button in total_switches:
+    if button.get_attribute("value") == "option2":
+        button.click()
+
+time.sleep(1)
+radio_buttons=driver.find_elements(By.XPATH, "//input[@class='radioButton']")
+for ele in radio_buttons:
+    if ele.get_attribute('value')=='radio3':
+        ele.click()
+
+time.sleep(1)
+dropdown=Select(driver.find_element(By.ID,"dropdown-class-example"))
+dropdown.select_by_value("option3")
+
+driver.find_element(By.ID, "name").send_keys("Chaya")
+time.sleep(1)
+driver.find_element(By.ID, "alertbtn").click()
+alert=driver.switch_to.alert
+assert 'Chaya' in alert.text
+time.sleep(1)
+alert.accept()
+time.sleep(2)
+driver.close()

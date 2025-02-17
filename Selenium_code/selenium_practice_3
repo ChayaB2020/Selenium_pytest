@@ -1,0 +1,58 @@
+#explicit and implicit wait
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from functools import reduce
+
+driver=webdriver.Chrome()
+driver.get("https://rahulshettyacademy.com//seleniumPractise//#")
+driver.implicitly_wait(8)
+driver.fullscreen_window()
+wait=WebDriverWait(driver,10)
+#time.sleep(1)
+
+driver.find_element(By.CSS_SELECTOR, ".search-keyword").send_keys("ca")
+time.sleep(1)
+objs=driver.find_elements(By.XPATH,'//div[@class="products"]/div')
+print(len(objs))
+for ele in objs:
+    ele.find_element(By.XPATH,'div/button').click()
+#time.sleep(1)
+driver.find_element(By.CSS_SELECTOR,"img[alt='Cart']").click()
+driver.find_element(By.XPATH,"//button[text()='PROCEED TO CHECKOUT']").click()
+#time.sleep(3)
+driver.find_element(By.CSS_SELECTOR,'.promoCode').send_keys('rahulshettyacademy')
+driver.find_element(By.CSS_SELECTOR,'.promoBtn').click()
+#time.sleep(5)
+wait.until(ec.visibility_of_element_located((By.XPATH, "//span[@class='promoInfo']")))
+if 'applied' in (driver.find_element(By.XPATH, "//span[@class='promoInfo']").text):
+    print("pass")
+
+#sum the amount
+prices= driver.find_elements(By.XPATH,"//td[5]/p[@class='amount']")
+sum=0
+for price in prices:
+    sum +=int(price.text)
+
+print(f'calculated sum is {sum}')
+total_amount=int(driver.find_element(By.XPATH,"//span[@class='totAmt']").text)
+print(f'total amount displayed is {total_amount}')
+assert sum==total_amount
+
+after_coupon=float(driver.find_element(By.CSS_SELECTOR,".discountAmt").text)
+print(f'after discount total value is {after_coupon}')
+if after_coupon<total_amount:
+    print("pass")
+
+expected_list=["Cauliflower","Carrot", "Capsicum", "Cashews"]
+
+shown_elements=driver.find_elements(By.XPATH, "//td/p[@class='product-name']")
+visible_items_name=[]
+for ele in shown_elements:
+   visible_items_name.append(ele.text)
+
+print(f"visible items name is {visible_items_name}")
+
+print(reduce(lambda a,b:a and b , map(lambda x,y:x in y,expected_list,visible_items_name),True))
